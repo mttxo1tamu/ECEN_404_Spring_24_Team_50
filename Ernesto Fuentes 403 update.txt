@@ -1,0 +1,10 @@
+Milestones:
+
+* Did more research for SQL databases
+* created date plan for where to be on my part
+* Started azure database, going to ask during lab about payment stuff for signups
+
+Issues:
+
+* keep learning about SQL database
+* need to do more
