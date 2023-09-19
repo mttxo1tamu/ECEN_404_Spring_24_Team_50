@@ -1,0 +1,42 @@
+9/20 - quiz 2
+
+9/21 ------------ have established azure database
+
+9/28 ------------ make space for where raw data, cleaned data, and final answer data(from vdb, fourier, and ML) will be stored
+
+9/27 - quiz 3
+
+9/28 - fsr  (due, try and get out of the way early though)
+
+10/2 - project introduction presentation
+
+10/4 - quiz 4
+
+10/5 ------------ test the database with random data, see if it stores properly where it's supposed to go (dubugging)
+
+10/12 ----------- test database on exporting data(to the fourier, vdb, ml)(fix bugs)
+
+10/19 ----------- test database on being requested data from(the app)(fix bugs)
+
+10/23 - update presentation
+
+10/27 ----------- have the regular database finished
+
+10/29 ----------- find websites to scrape data from
+
+10/31 ----------- have already practiced scraping different file types
+
+11/3 ------------ have scraping for pdfs working properly
+
+11/10 ----------- have scraping for website/html/url/xml working properly
+
+11/13 - final presentation
+
+11/18 ----------- finish the webscraping portion
+
+11/25 -----------have it working properly together
+
+11/27 - subsystem demonstration
+
+12/3  - final report 
+
