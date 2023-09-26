@@ -1,0 +1,18 @@
+Issues:
+-Android Simulation Memory Issues
+
+
+Solutions:
+-Purchase more memory
+
+
+Milestones:
+-Selection, testing and operation of Android Studio
+-Simluation of test device successful
+-Increased knowledge for coding in Kotlin and Java
+-Starter Kotlin code installed and ran on simluated deivce
+-Research done for XML coding templates using Figma Dev Platform
+-Reached out to computer science contact: researching React Native, Flutter (Dart)
+
+
+
