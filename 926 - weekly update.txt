@@ -1,0 +1,5 @@
+9/26 - weekly update:
+- did more vector database research
+- planned high level data flow for combining parallel paths
+- consulting with Dr. David Kebo Houngninou regarding how to approach my system design
+- 
