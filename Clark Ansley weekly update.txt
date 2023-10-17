@@ -1,0 +1,12 @@
+9/26 - weekly update:
+- did more vector database research
+- planned high level data flow for combining parallel path
+- consulting with Dr. David Kebo Houngninou regarding how to approach my system design
+
+
+10/10 - weekly update:
+- installation and troubleshooting of milvus vdb
+
+10/17 - weekly update:
+- python script skeleton
+- started writing methods in python script
