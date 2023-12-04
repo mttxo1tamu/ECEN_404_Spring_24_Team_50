@@ -85,7 +85,11 @@ while(run_again == 'y' or run_again == 'yes' or run_again == 'Y' or run_again ==
       avg_power= 0.98*(avg_power/top_k)
       return avg_power
       
-  filtered_df['forecast_power'] = filtered_df.apply(lambda row: search(row['vector']), axis=1)  
+  start_time = time.time()
+  filtered_df['forecast_power'] = filtered_df.apply(lambda row: search(row['vector']), axis=1)
+  end_time = time.time()
+
+  elapsed_time = end_time - start_time
 
   #Calculate percent error for each row
   filtered_df['percent_error'] = ((abs(filtered_df['forecast_power'] - filtered_df['power'])) / filtered_df['power']) * 100
@@ -100,25 +104,26 @@ while(run_again == 'y' or run_again == 'yes' or run_again == 'Y' or run_again ==
 
   #print data
   #create and print plots
-  filtered_df.plot(x="time", y=["power", "forecast_power"], kind="line")
+  filtered_df.plot(x="date", y=["power", "forecast_power"], kind="line")
   # Display the plot
   plt.title('Forecast Power vs Actual Power Over Time')
-  plt.xlabel('Time')
+  plt.xlabel('Date')
   plt.ylabel('Power (megawatt-hours)')
   plt.legend(['Power', 'Forecast Power'])
   plt.savefig('power_figure.png')
 
 
-  filtered_df.plot(x='time', y=['percent_error'], kind='line')
+  filtered_df.plot(x='date', y=['percent_error'], kind='line')
   # Display the plot
   plt.title('Percent Error')
-  plt.xlabel('Time')
+  plt.xlabel('Date')
   plt.ylabel('Percentage')
   plt.savefig('error_figure.png')
 
 
 
   print('Mean Average Percent Error: ', mean_percent_error)
+  print(f"Forecast Generation Time: {elapsed_time} seconds")
   print('-------------------------------')
 
   filtered_df = filtered_df.drop(columns=['vector'])
