@@ -21,6 +21,7 @@ from sqlalchemy import create_engine, MetaData, delete, Table, Column
 import sqlalchemy
 from sqlalchemy.engine import URL
 import pypyodbc
+import docker
 
 
 start_time = time.time()
@@ -37,7 +38,17 @@ df = pd.DataFrame()
 ####################################
 
 #open docker and run milvus
-#wait 1min?
+client = docker.from_env()
+
+container1 = client.containers.get("1d3c8ee64db3")
+container2 = client.containers.get("ecd05052c85a")
+container3 = client.containers.get("fc26d9202b9b")
+
+container1.start()
+container2.start()
+container3.start()
+
+time.sleep(60) #wait 1 min to ensure vdb has launched
 
 ####################################
 # connect to milvus vdb
@@ -70,6 +81,7 @@ engine = create_engine(connection_url, module=pypyodbc)
 
 ###################################
 
+#clear all existing data in the sql table before writing new forecasts
 metadata = MetaData()
 metadata.reflect(bind=engine)
 
@@ -86,32 +98,30 @@ conn.commit()
 
 locationslist = ['COAST', 'EAST', 'FAR_WEST', 'NORTH', 'NORTH_C', 'SOUTHERN', 'SOUTH_C', 'WEST']
 
+#loop to create forecast for each location
 for i in range(8):
     location = locationslist[i]
 
     location_start_time = time.time()
 
     # Define the SQL query for current location
-    sql_query = """
+    sql_query = f"""
     SELECT *
-    FROM weather_forecast
-    WHERE Location = ?
+    FROM weather_forecasts
+    WHERE Location = '{location}'
     """
     
     # Execute the query with user input as parameters
-    df = pd.read_sql_query(sql_query, engine, params = (location))
+    df = pd.read_sql_query(sql_query, engine)
 
     ##################################
     
     #fix df formatting
     #df = df.drop(columns=['dew point', 'wind', 'wind gust', 'pressure', 'precip.'])
-    #df = df.rename(columns={"wind speed": "wind_speed"})
+    df = df.rename(columns={"temp.": "temperature"})
     df['year'] = df['time'].dt.year.astype(int)
     df['date'] = df['time'].dt.strftime('%m-%d')
     df['hour'] = df['time'].dt.strftime('%H:%M')
-
-
-    #need to trim wind to just wind speed
     
 
     df = df.sort_values(by=['location', 'time']) #sorts by datetime within each location
@@ -129,7 +139,7 @@ for i in range(8):
         return embedding
     
     # Create the prevec conglomeration by combining values from other columns and embed it into 'vector' column 
-    df['vector'] = df.apply(lambda row: get_embedding(f"{row['year']}/{row['date']}/{row['hour']}/{row['hour']}/{row['hour']}/{row['temperature']}/{row['temperature']}/{row['humidity']}/{row['wind speed']}/{row['condition']}"), axis=1)
+    df['vector'] = df.apply(lambda row: get_embedding(f"{row['year']}/{row['date']}/{row['hour']}/{row['hour']}/{row['hour']}/{row['temperature']}/{row['temperature']}/{row['humidity']}/{row['wind']}/{row['conditions']}"), axis=1)
 
     ##################################
     
