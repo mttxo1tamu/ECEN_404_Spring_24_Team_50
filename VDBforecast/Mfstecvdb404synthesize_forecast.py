@@ -130,7 +130,7 @@ for i in range(8):
 
     # Calculate average power values where both power_a and power_b are available
     #merged_df['average_power'] = merged_df[['power_a', 'power_b']].mean(axis=1)
-    merged_df['forecast power'] = ((merged_df['vdb power']*.8)+(merged_df['ml power']*.2))
+    merged_df['forecast power'] = ((merged_df['vdb power']*.6)+(merged_df['ml power']*.4))
 
     # Drop power_a and power_b columns if not needed
     merged_df.drop(['vdb power', 'ml power'], axis=1, inplace=True)
