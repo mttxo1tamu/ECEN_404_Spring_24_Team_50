@@ -164,21 +164,25 @@ for i in range(8):
         )
         avg_power = 0
         
+        month = int(date.split('-')[0])
+        hr = int(hour.split(':')[0])
+
         #sum the top_k power values
         for hit in  results[0]:
             #print (hit.entity.get(['location', 'year', 'date', 'hour', 'temperature', 'humidity', 'wind_speed', 'condition', 'power']))
-            avg_power += (hit.entity.get('power')*(1.015**(year-hit.entity.get('year')))) #normalize to current year equivalent - 1.5% increase per year
+            avg_power += (hit.entity.get('power')*((-.025*math.cos((math.pi/6)*month-1)+1.025)**(year-hit.entity.get('year')))) #normalize to current year equivalent - 1.5% increase per year
             
         
         #calculate average power, adjust to tune for best results
-        month = int(date.split('-')[0])
-        hr = int(hour.split(':')[0])
         
-        yearly_amp = (-1000*math.sin((math.pi/6)*(month-1)+1))+(300*math.sin((math.pi/3)*(month-1)+1))+1700
+        
+        #yearly_amp = (-1000*math.sin((math.pi/6)*(month-1)+1))+(300*math.sin((math.pi/3)*(month-1)+1))+1700
         
         #avg_power= (-(yearly_amp)*math.sin((math.pi/12)*hr))+(avg_power/top_k)
         #avg_power= (-500*math.sin((math.pi/12)*hr))+(avg_power/top_k)
         avg_power= (avg_power/top_k)
+        if(location == 'FAR_WEST'):
+                avg_power += 1000
         return avg_power
 
         #normalization percentage variable throughout year on bell curve - 0-5%

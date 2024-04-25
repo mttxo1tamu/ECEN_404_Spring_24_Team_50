@@ -61,6 +61,19 @@ conn.execute(clear_table)
 conn.commit()
 
 ###################################
+missing_values_sql = metadata.tables['missing_values']
+
+clear_missing_values = missing_values_sql.delete()
+conn.execute(clear_missing_values)
+conn.commit()
+
+missing_values = False
+missing_values_df = pd.DataFrame({'missing values': 'False'}, index=[1])
+missing_values_df.to_sql('missing_values', con=engine, if_exists='append', index=False)
+
+
+
+
 
 
 locationslist = ['COAST', 'EAST', 'FAR_WEST', 'NORTH', 'NORTH_C', 'SOUTHERN', 'SOUTH_C', 'WEST']
@@ -94,6 +107,43 @@ for i in range(8):
 
     ##################################
 
+    df = df.drop(columns=['location', 'year', 'date', 'hour', 'conditions', 'temperature', 'feels like', 'precip', 'amount', 'cloud cover', 'dew point', 'humidity', 'wind', 'pressure', 'direction'])
+
+    df.rename(columns={'forecast power': 'vdb power'}, inplace=True)
+    mldf.rename(columns={'forecast power': 'ml power'}, inplace=True)
+
+    # Set datetime as index for both dataframes
+    mldf.set_index('time', inplace=True)
+    df.set_index('time', inplace=True)
+
+
+
+    # Merge dataframes based on datetime index
+    merged_df = mldf.merge(df, how='left', left_index=True, right_index=True)
+
+    # Check if any power_a values are NaN
+    missing_values = merged_df['vdb power'].isna().any()
+
+    # Fill missing values in power_b column with corresponding values from power_a column
+    merged_df['vdb power'] = merged_df['vdb power'].fillna(merged_df['ml power'])
+    merged_df['ml power'] = merged_df['ml power'].fillna(merged_df['vdb power'])
+
+    # Calculate average power values where both power_a and power_b are available
+    #merged_df['average_power'] = merged_df[['power_a', 'power_b']].mean(axis=1)
+    merged_df['forecast power'] = ((merged_df['vdb power']*.8)+(merged_df['ml power']*.2))
+
+    # Drop power_a and power_b columns if not needed
+    merged_df.drop(['vdb power', 'ml power'], axis=1, inplace=True)
+
+    # Reset index if needed
+    merged_df.reset_index(inplace=True)
+
+
+
+
+
+
+    '''
     df = df.sort_values(by=['location', 'time']) #sorts by datetime within each location
     df = df.reset_index(drop=True)
 
@@ -106,7 +156,7 @@ for i in range(8):
     
     
     #apply savitsky-golay filter for smoothing
-    #df['forecast_savgol'] = df[['forecast_power']].apply(lambda x: savgol_filter(x,18,3))
+    #df['forecast_savgol'] = df[['forecast_power']].apply(lambda x: savgol_filter(x,18,3))'''
     
     ##################################
     
@@ -115,9 +165,9 @@ for i in range(8):
     
     # Write the modified DataFrame back to a new CSV file
     data_folder = Path("/mnt/c/Users/wcans/milvus_compose/ERCOT_Hourly_Load_2022/")
-    output_csv_file_path = data_folder / 'dailyforecast_out.csv'  # Replace with the desired output path
+    output_csv_file_path = data_folder / 'synthesizedforecast_out.csv'  # Replace with the desired output path
     #not enabled at the moment
-    #df.to_csv(output_csv_file_path, index=False)
+    #merged_df.to_csv(output_csv_file_path, index=False)
 
     '''
     #print data
@@ -147,12 +197,18 @@ for i in range(8):
     print('-------------------------------')
 
 
-    df = df.drop(columns=['ml_power', 'conditions', 'temperature', 'feels like', 'precip', 'amount', 'cloud cover', 'dew point', 'humidity', 'wind', 'pressure', 'direction']) #'time_diff', 'missing_hours'
-    
-    #print(df)
+    #df = df.drop(columns=['ml_power', 'conditions', 'temperature', 'feels like', 'precip', 'amount', 'cloud cover', 'dew point', 'humidity', 'wind', 'pressure', 'direction']) #'time_diff', 'missing_hours'
+    print('missing values: ', missing_values)
+    print(merged_df)
     
     #Add to SQL
-    df.to_sql('synthesize_forecast', con=engine, if_exists='append', index=False)
+    merged_df.to_sql('synthesize_forecast', con=engine, if_exists='append', index=False)
+    
+    if(missing_values==True):
+        conn.execute(clear_missing_values)
+        conn.commit()
+        missing_values_df = pd.DataFrame({'missing values': 'True'}, index=[1])
+        missing_values_df.to_sql('missing_values', con=engine, if_exists='append', index=False)
 
 
 end_time = time.time()
