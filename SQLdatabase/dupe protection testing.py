@@ -7,8 +7,8 @@ import pandas as pd
 
 ###################################
 # declares the variables and defines them for the server connections, along with the table names that are going to be assigned
-SERVER_NAME = 'tcp:tecafs.database.windows.net,1433'
-DATABASE_NAME = 'TecafsSqlDatabase'
+SERVER_NAME = ''
+DATABASE_NAME = ''
 TABLE_NAME = 'historical_data'
 
 # makes the connection to the database with the connection string; has the driver, server name, database name, id, and password
@@ -16,8 +16,8 @@ connection_string = f"""
     DRIVER={{ODBC Driver 18 for SQL Server}};
     SERVER={SERVER_NAME};
     DATABASE={DATABASE_NAME};
-    Uid={'tecafs2023'};
-    Pwd={'Capstone50'};
+    Uid={''};
+    Pwd={''};
 """
 
 ###################################
@@ -30,7 +30,7 @@ engine = create_engine(connection_url, module=pypyodbc)
 # Load DataFrame
 # Assuming df is your DataFrame, Dropping the unnamed
 
-uploading_df = pd.read_csv(r"C:\Users\netof\final_dataframe_WEST_fixed.csv")
+uploading_df = pd.read_csv(r"C:\final_dataframe_WEST_fixed.csv")
 #print(uploading_df)
 
 if 'Unnamed: 0' in uploading_df.columns:
