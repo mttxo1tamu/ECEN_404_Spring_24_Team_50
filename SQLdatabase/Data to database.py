@@ -15,8 +15,8 @@ import pandas as pd
 ###################################
 
 # declares the variables and defines them for the server connections, along with the table names that are going to be assigned
-SERVER_NAME = 'tcp:tecafs.database.windows.net,1433'
-DATABASE_NAME = 'TecafsSqlDatabase'
+SERVER_NAME = ''
+DATABASE_NAME = ''
 TABLE_NAME = 'clean_data'
 
 ###################################
@@ -26,8 +26,8 @@ connection_string = f"""
     DRIVER={{ODBC Driver 18 for SQL Server}};
     SERVER={SERVER_NAME};
     DATABASE={DATABASE_NAME};
-    Uid={'tecafs2023'};
-    Pwd={'Capstone50'};
+    Uid={''};
+    Pwd={''};
 """
 ###################################
 
